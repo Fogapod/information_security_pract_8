@@ -50,7 +50,7 @@ def main():
         char_value = ord(char)
 
         for bit_pos in range(BITS_PER_LETTER):
-            bit = char_value & (0b1 << bit_pos)
+            bit = 1 if char_value & (0b1 << bit_pos) else 0
 
             x = current_pixel % src_width
             y = current_pixel // src_height
@@ -58,18 +58,20 @@ def main():
             pixel = list(src_image.getpixel((x, y)))
 
             def encode_bit(color):
+                # if bit is set, value should not be even
+
                 is_even = color % 2 == 0
 
                 if bit:
                     if is_even:
+                        # cannot overflow
+                        color += 1
+                else:
+                    if not is_even:
                         if color == 255:
                             color -= 1
                         else:
                             color += 1
-                else:
-                    if not is_even:
-                        # cannot overflow
-                        color += 1
 
                 return color
 
