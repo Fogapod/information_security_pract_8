@@ -41,7 +41,6 @@ fn encode_string(s: &str) -> String {
         let y = index / SQUARE_SIDE + 1;
 
         result.push_str(&format!("{}{}", x, y));
-        //println!("{} {} xy: {} {}", c, index, x, y);
     }
 
     result
