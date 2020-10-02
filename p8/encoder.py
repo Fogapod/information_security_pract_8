@@ -10,31 +10,26 @@ BITS_PER_LETTER = 8
 
 
 def main():
-    while True:
-        text = input("Enter text to encode: ")
-        if not text:
-            print("No text")
+    if len(sys.argv) < 3:
+        print("Not enough arguments provided")
+        sys.exit(1)
 
-            continue
+    src_image_path = sys.argv[1]
+    text = " ".join(sys.argv[2:])
 
-        if (unsupported := [c for c in text if c not in SUPPORTED_CHARS]) :
-            print(f"Unsupported letters: {''.join(unsupported)}")
-        else:
-            break
+    if (unsupported := [c for c in text if c not in SUPPORTED_CHARS]) :
+        print(f"Unsupported letters: {''.join(unsupported)}")
+        sys.exit(1)
 
-    while True:
-        src_image_path = input("Enter image path: ")
-        if not src_image_path.lower().endswith(".bmp"):
-            print("Please, provide a BMP image")
+    if not src_image_path.lower().endswith(".bmp"):
+        print("Please, provide a BMP image")
+        sys.exit(1)
 
-            continue
-
-        try:
-            src_image = Image.open(src_image_path).convert("RGBA")
-        except Exception as e:
-            print(f"Error openning image: {e}")
-        else:
-            break
+    try:
+        src_image = Image.open(src_image_path).convert("RGBA")
+    except Exception as e:
+        print(f"Error opening image: {e}")
+        sys.exit(1)
 
     src_width, src_height = src_image.size
 
@@ -43,22 +38,24 @@ def main():
 
         sys.exit(1)
 
-    current_pixel = 0
+    x = 0
+    y = 0
+
+    # R - 0
+    # G - 1
+    # B - 2
     current_color = 0
 
     for char in text:
         char_value = ord(char)
 
         for bit_pos in range(BITS_PER_LETTER):
-            bit = 1 if char_value & (0b1 << bit_pos) else 0
-
-            x = current_pixel % src_width
-            y = current_pixel // src_height
+            bit = bool(char_value & (0b1 << bit_pos))
 
             pixel = list(src_image.getpixel((x, y)))
 
-            def encode_bit(color):
-                # if bit is set, value should not be even
+            def hide_bit(color):
+                # if bit is set, color value should not be even
 
                 is_even = color % 2 == 0
 
@@ -75,12 +72,15 @@ def main():
 
                 return color
 
-            pixel[current_color] = encode_bit(pixel[current_color])
+            pixel[current_color] = hide_bit(pixel[current_color])
             src_image.putpixel((x, y), tuple(pixel))
 
             if current_color == 2:
-                # advance pixel every 3 iterations
-                current_pixel += 1
+                # advance coords when we are at BLUE value (3rd)
+                x += 1
+                if x == src_width:
+                    x = 0
+                    y += 1
 
                 current_color = 0
             else:
