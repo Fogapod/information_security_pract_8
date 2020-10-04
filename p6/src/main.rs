@@ -25,6 +25,7 @@
 ///                   | \/
 ///                   | 46 35 -> "4635"
 ///                   `----/\
+use itertools::Itertools;
 use std::iter::FromIterator;
 
 pub struct MatrixDimensions {
@@ -43,7 +44,10 @@ pub struct Secret {
 fn key_to_vec(key: &str) -> Vec<usize> {
     let key: Vec<usize> = key
         .chars()
-        .map(|c| c.to_digit(10).unwrap() as usize)
+        .map(|c| {
+            c.to_digit(10)
+                .expect(&format!("Invalid key: not a digit: {}", c)) as usize
+        })
         .collect();
 
     let mut sorted_key = key.to_vec();
@@ -167,7 +171,49 @@ impl Secret {
     }
 }
 
+fn all_possible_keys(partial_key: &str) -> Vec<String> {
+    let chars: Vec<char> = partial_key.chars().collect();
+
+    let digits: Vec<usize> = chars
+        .iter()
+        .filter_map(|c| c.to_digit(10))
+        .map(|c| c as usize)
+        .collect();
+
+    let mut missing_digits = vec![];
+    for i in 1..chars.len() + 1 {
+        let mut present = false;
+        for &d in &digits {
+            if i == d {
+                present = true;
+                break;
+            }
+        }
+
+        if !present {
+            missing_digits.push(i);
+        }
+    }
+
+    let mut possible = vec![];
+
+    for permutation in missing_digits.iter().permutations(missing_digits.len()) {
+        let mut possible_key = partial_key.to_owned();
+
+        for digit in permutation {
+            possible_key = possible_key.replacen("X", &digit.to_string(), 1);
+        }
+
+        possible.push(possible_key);
+    }
+
+    println!("{:?}", possible);
+
+    possible
+}
+
 fn main() {
+    // 1st part of task: implement cipher
     let text = "ПЕРЕСТАНОВКАТЕКСТАПОСТОЛБЦАМ";
     let key = "4312567";
     let rounds = 1;
@@ -181,4 +227,15 @@ fn main() {
 
     println!("Encoded: {}", encoded);
     println!("Decoded: {}", decoded);
+
+    // 2nd part of task: crack text using partial key, some numbers are substituted by 'X'
+    println!();
+
+    let partial_key = "XX3X2";
+    let text = "ИАОТЮОЕРКМФНТЫЧРИКМОШВСЫЛ";
+
+    for key in all_possible_keys(partial_key) {
+        let secret = Secret::new(text, &key);
+        println!("Trying key {:?}: {}", key, secret.decode(5)); // ШИФРОВАНИЕСОТКРЫТЫМКЛЮЧОМ
+    }
 }
