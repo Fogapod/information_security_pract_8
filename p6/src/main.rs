@@ -12,8 +12,19 @@
 ///     - Puts string into matrix with the width of key length going lr-tb.
 ///     - Reads matrix rows in order defined by key from top to bottom and appends characters into resulting string.
 ///
-/// Decoder:
-///     - Not yet implemented
+/// Decoder: Same steps as encoder but in reverse.
+///
+/// Example:
+///     key: "21"    -> [2, 1]
+///     text: "3456" -> [[3, 4], [5, 6]]
+///
+///     key        :  2 1
+///     text matrix: [3 4]
+///                  [5 6]
+///                   | |
+///                   | \/
+///                   | 46 35 -> 4635
+///                   `----/\
 use std::iter::FromIterator;
 
 pub struct MatrixDimensions {
@@ -21,7 +32,7 @@ pub struct MatrixDimensions {
     height: usize,
 }
 /// The only reason struct is used here is because I rewritten this program 5 times and I no longer remember why
-struct Secret {
+pub struct Secret {
     text_chars: Vec<char>,
     key: Vec<usize>,
 }
@@ -97,8 +108,7 @@ impl Secret {
         }
     }
 
-    /// Encodes secret using key
-    pub fn encode(&self, rounds: u32) -> String {
+    fn cipher(&self, decode: bool, rounds: u32) -> String {
         if rounds == 0 {
             return String::from_iter(self.text_chars.iter());
         }
@@ -132,16 +142,43 @@ impl Secret {
                     // Resulting vector is being filled using offsets.
                     //
                     // Note the `col_index - 1`: this is because key starts from 1 not 0
-                    result[(col_index - 1) * height + row_index] = chars[row_index * width + i];
+                    let from_index = (col_index - 1) * height + row_index;
+                    let to_index = row_index * width + i;
+
+                    if decode {
+                        result[from_index] = chars[to_index];
+                    } else {
+                        result[to_index] = chars[from_index];
+                    }
                 }
             }
         }
         return String::from_iter(result);
     }
+
+    /// Encodes secret
+    pub fn encode(&self, rounds: u32) -> String {
+        self.cipher(false, rounds)
+    }
+
+    /// Decodes secret
+    pub fn decode(&self, rounds: u32) -> String {
+        self.cipher(true, rounds)
+    }
 }
 
 fn main() {
-    let secret = Secret::new("ПЕРЕСТАНОВКАТЕКСТАПОСТОЛБЦАМ", "4312567");
+    let text = "ПЕРЕСТАНОВКАТЕКСТАПОСТОЛБЦАМ";
+    let key = "4312567";
+    let rounds = 1;
 
-    println!("Encoded: {}", secret.encode(1));
+    let secret = Secret::new(text, key);
+
+    let encoded = secret.encode(rounds);
+    let encoded_secret = Secret::new(&encoded, key);
+
+    let decoded = encoded_secret.decode(rounds);
+
+    println!("Encoded: {}", encoded);
+    println!("Decoded: {}", decoded);
 }
