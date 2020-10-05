@@ -1,19 +1,20 @@
-use p7::paper;
-use p7::sheet;
+use p7::{read_text, sheet, write_text};
 
 pub fn main() {
+    let text = "ШИФРРЕШЕТКАЯВЛЯЕТСЯЧАСТНЫМСЛУЧАЕМШИФРАМАРШРУТНОЙПЕРЕСТАНОВКИ";
     let mut sheet = sheet::Sheet::new(vec![
-        vec![true, false, false],
-        vec![true, true, false],
-        vec![false, false, false],
+        vec![0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+        vec![1, 0, 0, 0, 1, 0, 1, 1, 0, 0],
+        vec![0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
+        vec![0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+        vec![0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+        vec![0, 0, 1, 0, 0, 1, 1, 0, 0, 1],
     ]);
-    println!("Sheet: {}", sheet);
+    println!("Encoding: {}{}", text, sheet);
 
-    sheet.mirror(sheet::MirrorDirection::Horizontal);
-    println!("Sheet hor: {}", sheet);
+    sheet.reset();
+    let paper = write_text(&mut sheet, text);
 
-    sheet.mirror(sheet::MirrorDirection::Vertical);
-    println!("Sheet ver: {}", sheet);
-
-    let _paper = paper::Paper::new(1, 1);
+    println!("Encoded:{}", paper);
+    println!("Decoded: {}", read_text(&mut sheet, &paper));
 }

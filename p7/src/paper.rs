@@ -1,4 +1,5 @@
 use crate::matrix::{Matrix, MatrixDimensions};
+use crate::sheet::Sheet;
 
 use std::fmt;
 
@@ -7,17 +8,49 @@ pub struct Paper {
 }
 
 impl Paper {
-    pub fn new(height: usize, width: usize) -> Self {
-        let instance = Self {
-            matrix: vec![vec![' '; width]; height],
-        };
+    pub fn new(dimesions: MatrixDimensions) -> Self {
+        let area = dimesions.area();
 
-        let dimesions = instance.dimesions();
-        if !dimesions.is_square() {
-            panic!("Bad paper: not a square");
+        if area % 2 != 0 {
+            panic!(format!("Bad paper: area should be even, got {}", area));
         }
 
-        instance
+        let MatrixDimensions { height, width } = dimesions;
+
+        Self {
+            matrix: vec![vec![' '; width]; height],
+        }
+    }
+
+    pub fn draw(&mut self, sheet: &Sheet, chars: &[char]) {
+        let MatrixDimensions { height, width } = self.dimesions();
+
+        let mut current_char = 0;
+
+        for row in 0..height {
+            for col in 0..width {
+                if sheet.hole_at(row, col) {
+                    self.matrix[row][col] = chars[current_char];
+                    current_char += 1;
+                }
+            }
+        }
+    }
+
+    pub fn read(&self, sheet: &Sheet) -> Vec<char> {
+        let MatrixDimensions { height, width } = self.dimesions();
+
+        let mut chars = vec![];
+
+        for row in 0..height {
+            for col in 0..width {
+                if sheet.hole_at(row, col) {
+                    chars.push(self.matrix[row][col]);
+                }
+            }
+        }
+
+        chars
     }
 }
 
