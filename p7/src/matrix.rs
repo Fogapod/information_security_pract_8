@@ -29,9 +29,6 @@ pub trait Matrix<T> {
         let height = matrix.len();
         let width = if height == 0 { 0 } else { matrix[0].len() };
 
-        MatrixDimensions {
-            height: height,
-            width: width,
-        }
+        MatrixDimensions { height, width }
     }
 }

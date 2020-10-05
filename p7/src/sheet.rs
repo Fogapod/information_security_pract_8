@@ -25,8 +25,8 @@ impl Sheet {
             .sum();
 
         let instance = Self {
-            matrix: matrix,
-            num_holes: num_holes,
+            matrix,
+            num_holes,
             mirrored_v: false,
             mirrored_h: false,
         };
@@ -41,7 +41,8 @@ impl Sheet {
         if area / num_holes != 4 {
             panic!(format!(
                 "Bad sheet: holes count should be 1/4 of sheet area ({}), got {}",
-                area, num_holes,
+                area / 4,
+                num_holes,
             ));
         }
 
@@ -66,9 +67,9 @@ impl Sheet {
                 self.mirrored_v = !self.mirrored_v;
             }
             MirrorDirection::Horizontal => {
-                for row in 0..height {
+                for (row_index, row) in mirror.iter_mut().enumerate().take(height) {
                     for col in 0..width {
-                        mirror[row][width - col - 1] = self.matrix[row][col];
+                        row[width - col - 1] = self.matrix[row_index][col];
                     }
                 }
 
