@@ -2,7 +2,7 @@ use crate::matrix::{Matrix, MatrixDimensions};
 
 use std::fmt;
 
-pub enum MirrorDirection {
+pub enum FlipDirection {
     Vertical,
     Horizontal,
 }
@@ -11,8 +11,8 @@ pub struct Sheet {
     matrix: Vec<Vec<u8>>,
 
     // needed for resetting
-    mirrored_v: bool,
-    mirrored_h: bool,
+    flipped_v: bool,
+    flipped_h: bool,
 
     pub num_holes: usize,
 }
@@ -27,8 +27,8 @@ impl Sheet {
         let instance = Self {
             matrix,
             num_holes,
-            mirrored_v: false,
-            mirrored_h: false,
+            flipped_v: false,
+            flipped_h: false,
         };
 
         let dimesions = instance.dimesions();
@@ -53,40 +53,40 @@ impl Sheet {
         self.matrix[row][column] != 0
     }
 
-    pub fn mirror(&mut self, direction: MirrorDirection) {
+    pub fn flip(&mut self, direction: FlipDirection) {
         let MatrixDimensions { height, width } = self.dimesions();
 
         let mut mirror = vec![vec![0; width]; height];
 
         match direction {
-            MirrorDirection::Vertical => {
+            FlipDirection::Vertical => {
                 for row in 0..height {
                     mirror[height - row - 1] = self.matrix[row].to_owned();
                 }
 
-                self.mirrored_v = !self.mirrored_v;
+                self.flipped_v = !self.flipped_v;
             }
-            MirrorDirection::Horizontal => {
+            FlipDirection::Horizontal => {
                 for (row_index, row) in mirror.iter_mut().enumerate().take(height) {
                     for col in 0..width {
                         row[width - col - 1] = self.matrix[row_index][col];
                     }
                 }
 
-                self.mirrored_h = !self.mirrored_h;
+                self.flipped_h = !self.flipped_h;
             }
         }
 
         self.matrix = mirror
     }
 
-    pub fn reset(&mut self) {
-        if self.mirrored_v {
-            self.mirror(MirrorDirection::Vertical);
+    pub fn reset_rotation(&mut self) {
+        if self.flipped_v {
+            self.flip(FlipDirection::Vertical);
         }
 
-        if self.mirrored_h {
-            self.mirror(MirrorDirection::Horizontal);
+        if self.flipped_h {
+            self.flip(FlipDirection::Horizontal);
         }
     }
 }

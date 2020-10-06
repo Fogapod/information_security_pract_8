@@ -12,7 +12,7 @@ pub fn main() {
     ]);
     println!("Encoding: {}{}", text, sheet);
 
-    sheet.reset();
+    sheet.reset_rotation();
     let paper = write_text(&mut sheet, text);
 
     println!("Encoded:{}", paper);
