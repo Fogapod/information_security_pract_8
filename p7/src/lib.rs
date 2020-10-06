@@ -15,6 +15,14 @@ pub fn write_text(sheet: &mut Sheet, flips: &[FlipDirection], text: &str) -> Res
     let chars: Vec<char> = text.chars().collect();
     let char_count = chars.len();
 
+    if char_count != paper.dimensions().area() {
+        return Err(format!(
+            "Bad text: need exactly {} characters, got {}",
+            paper.dimensions().area(),
+            char_count
+        ));
+    }
+
     for (i, flip) in flips.iter().enumerate() {
         paper.draw(
             sheet,
