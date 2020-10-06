@@ -23,7 +23,7 @@ impl Paper {
     }
 
     pub fn draw(&mut self, sheet: &Sheet, chars: &[char]) {
-        let MatrixDimensions { height, width } = self.dimesions();
+        let MatrixDimensions { height, width } = self.dimensions();
 
         let mut current_char = 0;
 
@@ -38,7 +38,7 @@ impl Paper {
     }
 
     pub fn read(&self, sheet: &Sheet) -> Vec<char> {
-        let MatrixDimensions { height, width } = self.dimesions();
+        let MatrixDimensions { height, width } = self.dimensions();
 
         let mut chars = vec![];
 
@@ -62,7 +62,7 @@ impl Matrix<char> for Paper {
 
 impl fmt::Display for Paper {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let MatrixDimensions { height, width } = self.dimesions();
+        let MatrixDimensions { height, width } = self.dimensions();
 
         for row in 0..height {
             write!(f, "\n[")?;

@@ -23,7 +23,7 @@ impl Eq for MatrixDimensions {}
 pub trait Matrix<T> {
     fn get_matrix(&self) -> &Vec<Vec<T>>;
 
-    fn dimesions(&self) -> MatrixDimensions {
+    fn dimensions(&self) -> MatrixDimensions {
         let matrix = self.get_matrix();
 
         let height = matrix.len();

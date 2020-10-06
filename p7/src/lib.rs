@@ -10,7 +10,7 @@ use std::iter::FromIterator;
 use matrix::Matrix;
 
 pub fn write_text(sheet: &mut Sheet, flips: &[FlipDirection], text: &str) -> Paper {
-    let mut paper = Paper::new(sheet.dimesions());
+    let mut paper = Paper::new(sheet.dimensions());
 
     let chars: Vec<char> = text.chars().collect();
     let char_count = chars.len();

@@ -33,7 +33,7 @@ impl Sheet {
             flipped_h: false,
         };
 
-        let dimesions = instance.dimesions();
+        let dimesions = instance.dimensions();
         let area = dimesions.area();
 
         if area % 2 != 0 {
@@ -56,7 +56,7 @@ impl Sheet {
     }
 
     pub fn flip(&mut self, direction: &FlipDirection) {
-        let MatrixDimensions { height, width } = self.dimesions();
+        let MatrixDimensions { height, width } = self.dimensions();
 
         let mut mirror = vec![vec![0; width]; height];
 
@@ -111,7 +111,7 @@ impl Matrix<u8> for Sheet {
 
 impl fmt::Display for Sheet {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let MatrixDimensions { height, width } = self.dimesions();
+        let MatrixDimensions { height, width } = self.dimensions();
 
         for row in 0..height {
             write!(f, "\n[")?;
