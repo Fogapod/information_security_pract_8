@@ -20,7 +20,7 @@ pub struct Sheet {
 }
 
 impl Sheet {
-    pub fn new(matrix: Vec<Vec<u8>>) -> Self {
+    pub fn new(matrix: Vec<Vec<u8>>) -> Result<Self, String> {
         let num_holes = matrix
             .iter()
             .map(|row: &Vec<u8>| row.iter().filter(|value| **value != 0).count())
@@ -37,18 +37,18 @@ impl Sheet {
         let area = dimesions.area();
 
         if area % 2 != 0 {
-            panic!(format!("Bad sheet: area should be even, got {}", area));
+            return Err(format!("Bad sheet: area should be even, got {}", area));
         }
 
-        if area / num_holes != 4 {
-            panic!(format!(
+        if num_holes * 4 != area {
+            return Err(format!(
                 "Bad sheet: holes count should be 1/4 of sheet area ({}), got {}",
                 area / 4,
                 num_holes,
             ));
         }
 
-        instance
+        Ok(instance)
     }
 
     pub fn hole_at(&self, row: usize, column: usize) -> bool {

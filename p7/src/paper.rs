@@ -8,18 +8,18 @@ pub struct Paper {
 }
 
 impl Paper {
-    pub fn new(dimesions: MatrixDimensions) -> Self {
+    pub fn new(dimesions: MatrixDimensions) -> Result<Self, String> {
         let area = dimesions.area();
 
         if area % 2 != 0 {
-            panic!(format!("Bad paper: area should be even, got {}", area));
+            return Err(format!("Bad paper: area should be even, got {}", area));
         }
 
         let MatrixDimensions { height, width } = dimesions;
 
-        Self {
+        Ok(Self {
             matrix: vec![vec![' '; width]; height],
-        }
+        })
     }
 
     pub fn draw(&mut self, sheet: &Sheet, chars: &[char]) {
