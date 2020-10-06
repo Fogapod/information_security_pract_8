@@ -12,9 +12,17 @@ pub fn main() {
     ]);
     println!("Encoding: {}{}", text, sheet);
 
+    let flips = [
+        sheet::FlipDirection::DiagonalLR,
+        sheet::FlipDirection::Horizontal,
+        sheet::FlipDirection::DiagonalLR,
+        sheet::FlipDirection::Horizontal,
+    ];
+
+    let paper = write_text(&mut sheet, &flips, text);
+
     sheet.reset_rotation();
-    let paper = write_text(&mut sheet, text);
 
     println!("Encoded:{}", paper);
-    println!("Decoded: {}", read_text(&mut sheet, &paper));
+    println!("Decoded: {}", read_text(&mut sheet, &flips, &paper));
 }

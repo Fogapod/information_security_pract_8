@@ -5,6 +5,8 @@ use std::fmt;
 pub enum FlipDirection {
     Vertical,
     Horizontal,
+    DiagonalLR, // can be represented by Vertical + Horizontal
+                // DiagonalRL, // not possible to represent with other rotations
 }
 
 pub struct Sheet {
@@ -53,12 +55,12 @@ impl Sheet {
         self.matrix[row][column] != 0
     }
 
-    pub fn flip(&mut self, direction: FlipDirection) {
+    pub fn flip(&mut self, direction: &FlipDirection) {
         let MatrixDimensions { height, width } = self.dimesions();
 
         let mut mirror = vec![vec![0; width]; height];
 
-        match direction {
+        match *direction {
             FlipDirection::Vertical => {
                 for row in 0..height {
                     mirror[height - row - 1] = self.matrix[row].to_owned();
@@ -75,6 +77,16 @@ impl Sheet {
 
                 self.flipped_h = !self.flipped_h;
             }
+            FlipDirection::DiagonalLR => {
+                for row in 0..height {
+                    for col in 0..width {
+                        mirror[height - row - 1][width - col - 1] = self.matrix[row][col];
+                    }
+                }
+
+                self.flipped_v = !self.flipped_v;
+                self.flipped_h = !self.flipped_h;
+            }
         }
 
         self.matrix = mirror
@@ -82,11 +94,11 @@ impl Sheet {
 
     pub fn reset_rotation(&mut self) {
         if self.flipped_v {
-            self.flip(FlipDirection::Vertical);
+            self.flip(&FlipDirection::Vertical);
         }
 
         if self.flipped_h {
-            self.flip(FlipDirection::Horizontal);
+            self.flip(&FlipDirection::Horizontal);
         }
     }
 }
