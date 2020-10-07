@@ -1,6 +1,6 @@
 // "Fox" Cipher decoder
 
-const FOX_ENCODED: &'static str = "ВЩИТЗЬВЬЛОНЕНИУШИЗЕГАЕТСЮЕНОЙОСВЕПТПЫВЗШТРРОБОПАЕАОМНЛОЛОТМРЯЯЕЬЛОЛЕНА";
+const FOX_ENCODED: &'static str = "ШФССОЬОАИМЕЕТНВИИРИПЛЗВНЕПРСАОК ";
 
 fn decode_fox_string(text: &str) -> String {
     let chars: Vec<char> = text.chars().collect();
