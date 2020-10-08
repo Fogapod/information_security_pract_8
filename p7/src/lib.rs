@@ -23,11 +23,12 @@ pub fn write_text(sheet: &mut Sheet, flips: &[FlipDirection], text: &str) -> Res
         ));
     }
 
-    for (i, flip) in flips.iter().enumerate() {
-        paper.draw(
-            sheet,
-            &chars[(char_count / 4) * i..(char_count / 4) * (i + 1)],
-        );
+    let mut current_char = 0;
+
+    for flip in flips {
+        paper.draw(sheet, &chars[current_char..current_char + sheet.num_holes]);
+        current_char += sheet.num_holes;
+
         sheet.flip(flip);
     }
 

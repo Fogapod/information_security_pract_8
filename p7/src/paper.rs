@@ -22,7 +22,7 @@ impl Paper {
         })
     }
 
-    pub fn draw(&mut self, sheet: &Sheet, chars: &[char]) {
+    pub fn draw(&mut self, sheet: &Sheet, chars: &[char]) -> usize {
         let MatrixDimensions { height, width } = self.dimensions();
 
         let mut current_char = 0;
@@ -35,6 +35,8 @@ impl Paper {
                 }
             }
         }
+
+        current_char
     }
 
     pub fn read(&self, sheet: &Sheet) -> Vec<char> {
