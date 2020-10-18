@@ -48,7 +48,7 @@ def main():
     for char in text:
         char_value = ord(char)
 
-        for bit_pos in range(BITS_PER_LETTER):
+        for bit_pos in reversed(range(BITS_PER_LETTER)):
             bit = bool(char_value & (0b1 << bit_pos))
 
             pixel = list(src_image.getpixel((x, y)))
