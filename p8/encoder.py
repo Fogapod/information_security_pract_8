@@ -32,7 +32,7 @@ def main():
 
     src_width, src_height = src_image.size
 
-    if src_width * src_height < len(text) * BITS_PER_LETTER:
+    if src_width * src_height * 3 < len(text) * BITS_PER_LETTER:
         print("Not enough pixels to encode data")
 
         sys.exit(1)
